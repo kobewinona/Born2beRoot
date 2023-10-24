@@ -1,3 +1,38 @@
+- [Guides](#guides)
+	- [Installing Sudo](#installing-sudo)
+	- [Service Management](#service-management)
+	- [Setting up SSH](#setting-up-ssh)
+	- [Setting up UFW](#setting-up-ufw)
+	- [Setting up password policy](#setting-up-password-policy)
+	- [Changing expiry date for old users](#changing-expiry-date-for-old-users)
+	- [Creating a group](#creating-a-group)
+	- [Creating a user and assigning groups](#creating-a-user-and-assigning-groups)
+	- [Configuring Crontab](#configuring-crontab)
+	- [Modifying hostname](#modifying-hostname)
+	- [Package management](#package-management)
+- [Glossary](#glossary)
+	- [Partitions](#partitions)
+	- [Encryption](#encryption)
+	- [LVM (Logical Volume Manager)](#lvm-logical-volume-manager)
+	- [Firewall](#firewall)
+	- [SSH Service](#ssh-service)
+	- [Operating Systems](#operating-systems)
+	- [Storage Types](#storage-types)
+		- [Dynamically Allocated Storage](#dynamically-allocated-storage)
+		- [Fixed Size Storage](#fixed-size-storage)
+	- [Sudo](#sudo)
+	- [GRUB](#grub)
+	- [Linux kernel](#linux-kernel)
+	- [Encryption Passphrase](#encryption-passphrase)
+	- [Partitioning Scheme](#partitioning-scheme)
+- [Bonus](#bonus)
+	- [Install and Configure MariaDB](#install-and-configure-mariadb)
+	- [Install and Configure PHP](#install-and-configure-php)
+	- [Install and Configure Lighttpd](#install-and-configure-lighttpd)
+	- [Download and Configure WordPress](#download-and-configure-wordpress)
+		- [Create a MySQL Database for WordPress](#create-a-mysql-database-for-wordpress)
+		- [Complete WordPress Installation](#complete-wordpress-installation)
+
 # Guides
 
 ## Installing Sudo
@@ -173,7 +208,7 @@ These commands help you set up and configure UFW to control network traffic on y
 
 These steps collectively enhance the security of user passwords by enforcing stronger password policies and setting password expiration rules. This helps protect your system against common security threats related to weak or easily guessable passwords.
 
-### Changing expiry date for old users
+## Changing expiry date for old users
 
 To change the password policy for the root user and enforce minimum and maximum password age, you can use the **`passwd`** command with the **`-n`** (minimum days), **`-x`** (maximum days), and **`-w`** (warning days) options. Here's how you can do it:
 
@@ -365,15 +400,15 @@ In summary, `apt-get` relies on preconfigured network settings to access remote 
 
 # Glossary
 
-## **Partitions**
+## Partitions
 
 In the context of computer storage, a partition is a logical division of a physical storage device, such as a hard drive or SSD. Partitions are created to separate data and system files or to organize data in a structured way. Each partition appears as a separate storage volume to the operating system.
 
-## **Encryption**
+## Encryption
 
 Encryption is the process of converting data into a format that is unreadable without the appropriate decryption key. Encrypted partitions provide a high level of data security because the data stored on them cannot be easily accessed without the correct decryption key or passphrase.
 
-## **LVM (Logical Volume Manager)**
+## LVM (Logical Volume Manager)
 
 LVM is a software-based approach to managing disk drives and partitions on Linux systems. It allows you to create, resize, and manage logical volumes (LVs) independently of the physical disks and partitions. LVM provides flexibility and abstraction for storage management.
 
@@ -417,16 +452,16 @@ SSH stands for "Secure Shell." It is a network protocol and cryptographic method
         - Enterprise Focus: It's commonly used in enterprise environments for reliability and performance.
     - **Differences from Windows and Linux**: Unix-based, advanced file system (ZFS), built-in virtualization (Zones), and commonly used in enterprise environments.
 
-## **Storage Types**
+## Storage Types
 
-### **Dynamically Allocated Storage**
+### Dynamically Allocated Storage
 
 - **On-Demand Storage**: When you choose dynamically allocated storage, VirtualBox initially creates a virtual hard disk with a small, predefined size. This initial size is relatively small and only takes up a minimal amount of physical disk space on your host machine.
 - **Storage Expansion**: As you use the virtual machine and install software or save files on it, the virtual hard disk grows dynamically to accommodate the actual data being stored on it. In other words, it expands in size automatically as needed.
 - **Efficient Use of Space**: Dynamically allocated storage is efficient in terms of physical disk space usage because it only consumes as much space as the virtual machine requires based on its usage. It helps save space on your host machine's physical storage.
 - **Performance Considerations**: While dynamically allocated storage is efficient in terms of space usage, it might have a slight performance overhead compared to fixed-size storage. This is because the virtual hard disk may need to expand dynamically as data is written, which can introduce some overhead compared to a fixed-size disk that is pre-allocated to its maximum size.
 
-### **Fixed Size Storage**
+### Fixed Size Storage
 
 - **Preallocated Space**: In contrast, when you choose fixed size storage, VirtualBox creates a virtual hard disk with a predefined, fixed size. This means the entire disk space is reserved upfront, even if you don't use all of it immediately.
 - **Performance Advantage**: Fixed size storage can offer slightly better performance compared to dynamically allocated storage because there is no need to expand the disk dynamically during usage.
@@ -553,7 +588,7 @@ Here's how encryption passphrases work:
 
 Passphrases are commonly used in various encryption scenarios, including encrypting files, encrypting email communications, protecting access to encrypted devices (such as smartphones or hard drives), and securing online accounts. They play a crucial role in ensuring the confidentiality and integrity of sensitive data.
 
-# **Partitioning Scheme**
+# Partitioning Scheme
 
 Partitioning is the process of dividing a hard disk into separate sections, each of which can be used for a different purpose or contain different types of data. The partitioning scheme you choose determines how you allocate storage space on your disk. Here are the suggested partitioning options:
 
@@ -568,3 +603,349 @@ Partitioning is the process of dividing a hard disk into separate sections, each
     
 
 The choice of partitioning scheme depends on your specific needs and preferences. For a typical desktop installation, separating `/home` is often a good idea, as it can simplify backups and system upgrades. If you anticipate specific disk space management needs, such as hosting a web server or database server, you might consider separating `/var` and `/tmp` as well.
+
+# Bonus
+
+Setting up a functional WordPress website with lighttpd, MariaDB, and PHP involves several steps. Here's a high-level overview of the process:
+
+1. **Install and Configure MariaDB:**
+    - Install the MariaDB server on your Debian system if it's not already installed.
+    - Secure your MariaDB installation by running **`mysql_secure_installation`** to set a root password and remove unnecessary default users.
+    - Create a new database and user for WordPress, granting appropriate permissions.
+    
+    | user | password |
+    | --- | --- |
+    | dklimkin | handsoff |
+    
+    ```bash
+    mariadb -u <dklimkin> -p
+    ```
+    
+    ```bash
+    SHOW DATABASES;
+    ```
+    
+2. **Install and Configure PHP:**
+    - Install PHP and the required PHP extensions. You'll need packages like **`php`**, **`php-fpm`**, and various PHP modules.
+    - Configure PHP-FPM to work with your web server (lighttpd).
+3. **Install and Configure Lighttpd:**
+    - Install the lighttpd web server if it's not already installed.
+    - Configure lighttpd to work with PHP. You'll need to configure FastCGI to communicate with PHP-FPM.
+    - Set up your website's document root and configure virtual hosts if you plan to host multiple sites.
+4. **Install WordPress:**
+    - Download the latest WordPress release from the official website.
+    - Extract the WordPress files to your website's document root directory.
+    - Create a **`wp-config.php`** file by copying the sample configuration file and updating it with your database credentials.
+5. **Complete the WordPress Installation:**
+    - Access your website through a web browser to complete the WordPress installation process.
+    - You'll need to provide the database information, site title, admin username, password, and other details.
+6. **Configure Additional Settings:**
+    - Customize your WordPress website, including themes, plugins, and settings.
+7. **Secure Your Website:**
+    - Install security plugins and follow best practices to secure your WordPress installation.
+    - Regularly update WordPress, themes, and plugins to patch security vulnerabilities.
+8. **Test Your Website:**
+    - Ensure that your WordPress website is functioning correctly.
+    - Test various features, such as creating posts, adding pages, and installing plugins.
+9. **Backup and Maintenance:**
+    - Set up regular backups of your website and database.
+    - Schedule maintenance tasks for updates, security scans, and optimization.
+10. **Monitor Performance:**
+    - Use monitoring tools to keep an eye on the performance of your server and website.
+    - Optimize your server and website for better performance.
+
+Keep in mind that this is a simplified overview, and the specific steps may vary depending on your server's configuration and requirements. Be sure to consult the documentation for each software component and follow best practices for security and performance.
+
+Ok, I set up a VM on Debian OS and set up only very basic staff with little additional services. Now I want to try to set up a functional WordPress website with the following services: lighttpd, Mari- aDB, and PHP.
+
+# Install and Configure MariaDB
+
+**MariaDB** is a popular open-source relational database management system (RDBMS) that is commonly used with WordPress to store and manage your website's data.
+
+Here's how you can install and configure MariaDB on your Debian-based system:
+
+1. **Install MariaDB**:
+    - Open a terminal on your Debian VM.
+    - Run the following command to install MariaDB:
+        
+        ```bash
+        sudo apt-get update
+        sudo apt-get install mariadb-server
+        ```
+        
+    
+    This will download and install the MariaDB server on your system.
+    
+2. **Secure Your MariaDB Installation**:
+After the installation is complete, you should secure your MariaDB installation by running the `mysql_secure_installation` script. This script will perform several important tasks, including setting a root password and removing unnecessary default users.
+    - Run the following command to start the secure installation process:
+        
+        ```bash
+        sudo mysql_secure_installation
+        ```
+        
+    
+    Follow the prompts to complete the secure installation. You will be asked to set a root password, remove anonymous users, disallow root login remotely, remove the test database, and reload privileges. It's recommended to answer "Y" (Yes) to all these prompts for a secure MariaDB installation.
+    
+3. **Create a New Database and User for WordPress**:
+Now that MariaDB is installed and secured, you'll need to create a new database and user for your WordPress installation.
+    - Log in to the MariaDB shell by running the following command and entering the root password you set during the secure installation:
+        
+        ```bash
+        sudo mysql -u root -p
+        ```
+        
+    - Once you're in the MariaDB shell, you can create a new database. Replace **`yourdbname`** with your desired database name:
+        
+        ```sql
+        CREATE DATABASE yourdbname;
+        ```
+        
+    - Next, create a new user and set a password for that user. Replace **`yourdbuser`** with your desired username and **`yourpassword`** with your desired password:
+        
+        ```sql
+        CREATE USER 'yourdbuser'@'localhost' IDENTIFIED BY 'yourpassword';
+        ```
+        
+    - Finally, grant the necessary privileges to the user on the database. Replace **`yourdbname`** and **`yourdbuser`** with the appropriate values:
+        
+        ```sql
+        GRANT ALL PRIVILEGES ON yourdbname.* TO 'yourdbuser'@'localhost';
+        ```
+        
+    - To apply the changes and exit the MariaDB shell, run:
+        
+        ```sql
+        FLUSH PRIVILEGES;
+        EXIT;
+        ```
+        
+
+That's it! You've installed and configured MariaDB for your WordPress website. You now have a database and user ready to be used during the WordPress installation.
+
+# Install and Configure PHP
+
+In this step, you'll install PHP and the required PHP extensions for WordPress. You'll also configure PHP-FPM to work with your web server, which in your case is lighttpd.
+
+Here's how to do it:
+
+1. **Install PHP and Required Extensions**:
+    - Open a terminal on your Debian system.
+    - Run the following command to install PHP and some commonly used PHP extensions:
+        
+        ```bash
+        sudo apt-get install php php-fpm php-mysql php-curl php-gd php-mbstring php-xml php-json
+        ```
+        
+    
+    This command will install PHP along with extensions that are necessary for WordPress to function correctly. You can install additional extensions later if needed.
+    
+2. **Configure PHP-FPM**:
+    - PHP-FPM (PHP FastCGI Process Manager) is used to handle PHP requests. You need to configure it to work with your web server, which is lighttpd in your case.
+    - Edit the PHP-FPM configuration file using a text editor (e.g., Nano or Vim). For example:
+        
+        ```bash
+        sudo vim /etc/php/7.4/fpm/pool.d/www.conf
+        ```
+        
+    - Find the following lines in the configuration file and make sure they are set as follows:
+        
+        ```bash
+        listen = /run/php/php7.4-fpm.sock
+        ```
+        
+        This configuration specifies the socket file that PHP-FPM will use to communicate with your web server.
+        
+3. **Restart PHP-FPM**:
+    - After making the configuration changes, you'll need to restart the PHP-FPM service to apply the changes:
+        
+        ```bash
+        sudo systemctl restart php7.4-fpm
+        ```
+        
+
+Now, PHP and PHP-FPM are installed and configured to work with lighttpd, setting the stage for WordPress to run smoothly.
+
+# Install and Configure Lighttpd
+
+In this step, you will install the lighttpd web server and configure it to work with PHP-FPM.
+
+Here's how to do it:
+
+1. **Install Lighttpd**:
+    - Open a terminal on your Debian system.
+    - Run the following command to install the lighttpd web server:
+        
+        ```bash
+        sudo apt-get install lighttpd
+        ```
+        
+    
+    This command will download and install lighttpd on your system.
+    
+2. **Configure Lighttpd for PHP-FPM**:
+    - Next, you need to configure lighttpd to work with PHP-FPM.
+    - Create a configuration file for your website. You can use the default configuration file and make adjustments as needed:
+        
+        ```bash
+        sudo nano /etc/lighttpd/conf-available/15-fastcgi-php.conf
+        ```
+        
+    - Add the following lines to the configuration file:
+        
+        ```graphql
+        fastcgi.server += ( ".php" =>
+          ((
+            "socket" => "/run/php/php7.4-fpm.sock",  # Use the correct PHP-FPM socket path
+            "broken-scriptfilename" => "enable"
+          ))
+        )
+        ```
+        
+    
+    Replace `/run/php/php7.4-fpm.sock` with the correct path to the PHP-FPM socket file you configured in the previous step.
+    
+3. **Enable the PHP Configuration**:
+    - Enable the PHP configuration you just created by creating a symbolic link:
+        
+        ```bash
+        sudo ln -s /etc/lighttpd/conf-available/15-fastcgi-php.conf /etc/lighttpd/conf-enabled/
+        ```
+        
+4. **Restart Lighttpd**:
+    - To apply the changes, restart the lighttpd web server:
+        
+        ```bash
+        sudo systemctl restart lighttpd
+        ```
+        
+
+With these steps, you have installed and configured lighttpd to work with PHP-FPM. This sets up the web server environment needed for WordPress.
+
+# Download and Configure WordPress
+
+1. **Download WordPress**:
+    
+    You can download the latest version of WordPress from the official website. You can use the **`wget`** command to download it directly to your server:
+    
+    ```bash
+    wget https://wordpress.org/latest.tar.gz
+    ```
+    
+2. **Extract WordPress**:
+    
+    Once the download is complete, extract the WordPress archive:
+    
+    ```bash
+    tar -xzvf latest.tar.gz
+    ```
+    
+3. **Move WordPress Files**:
+    
+    Move the extracted WordPress files to your web server's document root. In your case, with Lighttpd, the document root is typically `/var/www/html/`. You can use the following command:
+    
+    ```bash
+    sudo mv wordpress/* /var/www/html/
+    ```
+    
+4. **Create a WordPress Configuration File**:
+    
+    ```bash
+    cd /var/www/html/
+    ```
+    
+    ```bash
+    sudo cp wp-config-sample.php wp-config.php
+    ```
+    
+    WordPress needs a configuration file to connect to the database. Create a copy of the sample configuration file:
+    
+5. **Edit the WordPress Configuration File**:
+    
+    Open the `wp-config.php` file in a text editor and update the database settings with the credentials you created earlier:
+    
+    ```bash
+    sudo nano wp-config.php
+    ```
+    
+    Update the following lines with your database information:
+    
+    ```php
+    define('DB_NAME', 'your_database_name');
+    define('DB_USER', 'your_database_user');
+    define('DB_PASSWORD', 'your_database_password');
+    define('DB_HOST', 'localhost');
+    ```
+    
+    Save and exit the text editor.
+    
+
+### Create a MySQL Database for WordPress
+
+1. **Access MySQL**:
+    
+    Access the MySQL command-line interface:
+    
+    ```bash
+    mariadb -u root -p
+    ```
+    
+2. **Create a Database**:
+    
+    Create a new MySQL database for WordPress. Replace `your_database_name` with the desired database name:
+    
+    ```sql
+    CREATE DATABASE your_database_name;
+    ```
+    
+3. **Create a Database User**:
+    
+    Create a MySQL user and grant privileges to the newly created database. Replace `your_database_user` and `your_password` with your desired username and password:
+    
+    ```sql
+    CREATE USER 'your_database_user'@'localhost' IDENTIFIED BY 'your_password';
+    ```
+    
+4. **Grant Privileges**:
+    
+    Grant the necessary privileges to the user for the database:
+    
+    ```sql
+    GRANT ALL PRIVILEGES ON your_database_name.* TO 'your_database_user'@'localhost';
+    ```
+    
+5. **Flush Privileges**:
+    
+    Flush the privileges to update the MySQL privilege tables:
+    
+    ```sql
+    FLUSH PRIVILEGES;
+    ```
+    
+6. **Exit MySQL**:
+    
+    Exit the MySQL command-line interface:
+    
+    ```sql
+    EXIT;
+    ```
+    
+
+### Complete WordPress Installation
+
+1. **Access WordPress Installer**:
+    
+    Open a web browser and go to your server's domain or IP address (e.g., `http://your_domain_or_ip`). You should see the WordPress installation page.
+    
+2. **Complete Installation**:
+    
+    Follow the on-screen instructions to complete the WordPress installation. You'll be prompted to enter your site title, create an admin username and password, and provide an email address.
+    
+3. **Log In**:
+    
+    Once the installation is complete, you can log in to the WordPress admin dashboard using the admin credentials you just created.
+    
+
+That's it! You've successfully installed and configured WordPress on your server. You can now start building your website or blog using the WordPress platform.
+
+If you encounter any issues or have questions along the way, feel free to ask for assistance. Good luck with your WordPress project!
